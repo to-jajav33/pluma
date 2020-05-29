@@ -1,0 +1,69 @@
+{
+  "name": "pluma",
+  "version": "0.0.1",
+  "description": "App for writing stories",
+  "productName": "Pluma App",
+  "cordovaId": "com.jajav33.pluma.app",
+  "capacitorId": "",
+  "author": "jajav33 <to.jajav33@gmail.com>",
+  "private": true,
+  "repository": {
+    "url": "https://github.com/to-jajav33/pluma.git"
+  },
+  "scripts": {
+    "git:commit": "npx git-cz",
+    "lint": "eslint --ext .js,.ts,.vue --ignore-path .gitignore ./",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.0.0",
+    "@vue/composition-api": "^0.5.0",
+    "axios": "^0.18.1",
+    "quasar": "^1.9.5",
+    "vue-i18n": "^8.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
+    "@quasar/app": "^1.6.2",
+    "@types/node": "^10.17.15",
+    "@typescript-eslint/eslint-plugin": "^2.17.0",
+    "@typescript-eslint/parser": "^2.17.0",
+    "babel-eslint": "^10.0.1",
+    "commitizen": "^4.1.2",
+    "cz-conventional-changelog": "^3.2.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-loader": "^3.0.3",
+    "eslint-plugin-vue": "^6.1.2",
+    "husky": "^4.2.5",
+    "semantic-release": "^17.0.8"
+  },
+  "engines": {
+    "node": ">= 10.18.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  },
+  "browserslist": [
+    "last 1 version, not dead, ie >= 11"
+  ],
+  "resolutions": {
+    "@babel/parser": "7.7.5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "npx commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  }
+}
