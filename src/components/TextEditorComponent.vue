@@ -4,10 +4,31 @@
     <div class="editor">
       <editor-menu-bar class="bg-green" :editor="editor" v-slot="{ commands, isActive }">
         <div>
-
-          <q-btn class="" @click="commands.mention({ id: 1, label: 'Philipp Kühn' })">
-            <q-icon name="add"></q-icon>
-            <span>Insert Mention</span>
+          <q-select
+            filled
+            options-sanitize
+            v-model="queryEditor"
+            use-input
+            hide-selected
+            fill-input
+            input-debounce="0"
+            :options="filteredUsersEditor"
+            option-value="name"
+            option-label="name"
+            @filter="onFilterEditor"
+            @input="onInputEditor(queryEditor, {commands})"
+            style="width: 250px; padding-bottom: 32px"
+            map-options
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  No results
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+          <!-- <q-btn icon="add" label="Insert Mention" @click="onFilterEditor"> -->
           </q-btn>
 
           <q-btn
@@ -184,12 +205,7 @@ export default {
           new History(),
           new Mention({
             // a list of all suggested items
-            items: () => [
-              { id: 1, name: 'Philipp Kühn' },
-              { id: 2, name: 'Hans Pagel' },
-              { id: 3, name: 'Kris Siepert' },
-              { id: 4, name: 'Justin Schueler' },
-            ],
+            items: () => this.items,
             // is called when a suggestion starts
             onEnter: ({
               items, query, range, command, virtualNode,
@@ -242,16 +258,7 @@ export default {
             // this function is optional because there is basic filtering built-in
             // you can overwrite it if you prefer your own filtering
             // in this example we use fuse.js with support for fuzzy search
-            onFilter: (items, query) => {
-              if (!query) {
-                return items
-              }
-              const fuse = new Fuse(items, {
-                threshold: 0.2,
-                keys: ['name'],
-              })
-              return fuse.search(query)
-            },
+            onFilter: this.onFilter,
           }),
           new Code(),
           new Bold(),
@@ -259,20 +266,31 @@ export default {
         ],
         content: '',
       }),
+      queryEditor = '',
       query = null,
       suggestionRange = null,
-      filteredUsers : Array<string> = [],
+      filteredUsersEditor : Array<any> = [],
+      filteredUsers : Array<any> = [],
       navigatedUserIndex  = 0,
+      items = [
+        { id: 1, name: 'Philipp Kühn' },
+        { id: 2, name: 'Hans Pagel' },
+        { id: 3, name: 'Kris Siepert' },
+        { id: 4, name: 'Justin Schueler' },
+      ],
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       insertMention = () => {};
     
     return { 
       editor,
       query,
+      queryEditor,
+      filteredUsersEditor,
       suggestionRange,
       filteredUsers,
       navigatedUserIndex,
-      insertMention
+      insertMention,
+      items
      };
   },
   computed: {
@@ -284,6 +302,34 @@ export default {
     },
   },
   methods: {
+    onInputEditor(value, { commands }) {
+      commands.mention({ id: value.id, label: value.name });
+    },
+    onFilterEditor(val, update, abort) {
+      update(() => {
+        const needle = val.toLowerCase()
+        const results = this.onFilter(this.items, needle);
+        this.filteredUsersEditor = results;
+      });
+    },
+    onFilter(items, query) {
+      if (!query) {
+        return items
+      }
+      const fuse = new Fuse(items, {
+        threshold: 0.2,
+        keys: ['name'],
+      })
+
+      const results : Array<any> = [];
+      fuse.search(query).forEach((value) => {
+        if (value.item) {
+          results.push(value.item);
+        }
+      });
+
+      return results;
+    },
     // navigate to the previous item
     // if it's the first item, navigate to the last one
     upHandler() {
@@ -319,7 +365,7 @@ export default {
         return
       }
       // ref: https://atomiks.github.io/tippyjs/v6/all-props/
-      this.popup = tippy('.page', {
+      this.popup = tippy('q-page', {
         getReferenceClientRect: node.getBoundingClientRect,
         appendTo: () => document.body,
         interactive: true,
