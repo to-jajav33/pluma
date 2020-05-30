@@ -6,6 +6,7 @@
         <div>
           <q-select
             filled
+            label="Variables"
             options-sanitize
             v-model="queryEditor"
             use-input
@@ -19,17 +20,20 @@
             @input="onInputEditor(queryEditor, {commands})"
             style="width: 250px; padding-bottom: 32px"
             map-options
+            ref="refSelectVariable"
           >
             <template v-slot:no-option>
               <q-item>
-                <q-item-section class="text-grey">
-                  No results
+                <q-item-section class="full-width">
+                  <q-btn class="full-width" color="primary" dense flat icon="add" label="Add New Variable" @click="onAddVariable" />
                 </q-item-section>
               </q-item>
             </template>
+
+            <template v-slot:before-options>
+              <q-btn class="full-width" color="primary" dense flat icon="add" label="Add New Variable" @click="onAddVariable" />
+            </template>
           </q-select>
-          <!-- <q-btn icon="add" label="Insert Mention" @click="onFilterEditor"> -->
-          </q-btn>
 
           <q-btn
           :class="{ 'is-active': isActive.bold() }"
@@ -153,6 +157,7 @@
 
 <script lang="ts">
 
+import { uid } from 'quasar';
 import Fuse from 'fuse.js'
 import tippy, { sticky } from 'tippy.js'
 import { Editor, EditorContent, EditorMenuBar } from 'tiptap';
@@ -302,6 +307,22 @@ export default {
     },
   },
   methods: {
+    onAddVariable() {
+      const newName = this.$refs.refSelectVariable.inputValue;
+      if (!newName) return;
+
+      let found = false;
+      for (let i = 0; i < this.items.length; i++) {
+        found = (this.items[i].name === newName);
+        if (found) break;
+      }
+
+      if (!found) {
+        const option = {id: uid(), name: newName};
+        this.$refs.refSelectVariable.add(option);
+        this.items.push(option);
+      }
+    },
     onInputEditor(value, { commands }) {
       commands.mention({ id: value.id, label: value.name });
     },
