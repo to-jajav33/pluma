@@ -450,8 +450,8 @@ export default {
     
     &.is-empty
       opacity: 0.5;
-    
-  
+
+
 
 .tippy-box[data-theme~=dark]
   background-color: $dark;
@@ -461,4 +461,9 @@ export default {
   color: white;
   border-radius: 5px;
 
+</style>
+
+<style lang="stylus">
+.ProseMirror
+  border: 1px solid white;
 </style>
