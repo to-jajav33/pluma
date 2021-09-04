@@ -1,0 +1,10 @@
+// app global css in SCSS form
+.body--light {
+    background-color: $background-color--light;
+    color: $dark;
+}
+
+.body--dark {
+    background-color: $background-color--dark;
+    color: $light;
+}
